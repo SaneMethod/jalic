@@ -1,11 +1,14 @@
 {
-    "name": "jquery-cache",
-    "homepage": "https://github.com/SaneMethod/jquery-ajax-localstorage-cache",
-    "description": "Store ajax responses using the browser's local storage, or any Storage-interface compatible object.",
-    "main": "jquery-ajax-localstorage-cache.js",
+    "name": "jquery-indexeddb-cache",
+    "homepage": "https://github.com/SaneMethod/jalic",
+    "description": "Store ajax responses using the browser's local storage and IndexedDB.",
+    "main": "dist/jalic.min.js",
     "keywords": [
+        "jquery",
         "ajax",
+        "indexeddb",
         "localstorage",
+        "cache",
         "caching"
     ],
     "ignore":[],
