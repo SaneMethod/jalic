@@ -3,11 +3,33 @@
         dbReady = $.Deferred(),
         db;
 
+    /**
+     * At this point, we'll only support unprefixed, non-experimental versions of IndexedDB, to simplify our
+     * lives - there are a number of differences we would need to account for if we were to attempt to support
+     * early attempts at IndexedDB implementations, some of which you can read about in the excellent MDN
+     * documentation at
+     * https://developer.mozilla.org/en/docs/Web/API/IndexedDB_API and
+     * https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB.
+     */
     if (!window.indexedDB) throw new Error("Expecting unprefixed IndexedDB support on window object.");
 
+    /**
+     * Create the 'jalic' IndexedDB db.
+     * For now, we handle errors merely by logging them and rejecting the associated Deferred object with the
+     * error event. This should be replaced by something more robust in the future...
+     *
+     * @param idb
+     * @returns {*}
+     */
     function createDatabase(idb){
         var dbreq = idb.open('jalic', 1);
 
+        /**
+         * Something went wrong when opening our db. This could range from the user refusing the
+         * request to allow this site to store data, to the current version of the db being higher
+         * than the one we requested, to storage issues or lacking implementation.
+         * @param event
+         */
         dbreq.onerror = function(event){
             console.log(event);
             dbReady.reject(event);
@@ -35,6 +57,10 @@
             };
         };
 
+        /**
+         * DB was opened successfully, with no upgrade needed.
+         * @param event
+         */
         dbreq.onsuccess = function(event){
             db = event.target.result;
             dbReady.resolve();
@@ -53,9 +79,11 @@
      */
     $.jidb = {
         /**
-         * Set an item withn the jalicData objectStore, using the given jdName and data, with optionally
+         * Set an item within the jalicData objectStore, using the given jdName and data, with optionally
          * a dataType parameter to store alongside the data. If dataType is not provided, it is the result of
          * typeof data.
+         * Notice that we 'put' data, rather than add it - that means we will always overwrite data with an
+         * identical key (jdName), if it already exists.
          * @param jdName
          * @param data
          * @param dataType

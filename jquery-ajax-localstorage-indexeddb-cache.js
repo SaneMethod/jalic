@@ -47,6 +47,17 @@
         storage.removeItem(cacheKey + 'cachettl');
     };
 
+    /**
+     * Add an item to local storage and IndexedDB storage. We use local storage to satisfy our
+     * need to synchronously determine whether we have a value stored for a given key (and whether it is
+     * within the cachettl), and use IndexedDB to store the actual value associated with the key.
+     * @param {Storage|object} storage
+     * @param {string} cacheKey
+     * @param {number} ttl
+     * @param {*} data
+     * @param {string} dataType
+     * @returns {$.Deferred}
+     */
     var addToStorage = function(storage, cacheKey, ttl, data, dataType){
         var defer = $.Deferred();
 
@@ -131,10 +142,11 @@
                 value = (storage) ? storage.getItem(cacheKey) : false;
 
             if (value){
-                // If the key is in the Storage-based cache, indicate that we want to handle this ajax request
-                // (by returning a value), and use the cache key to retrieve the value from the IndexedDB. Then,
-                // call the completeCallback with the fetched value.
-
+                /**
+                 * If the key is in the Storage-based cache, indicate that we want to handle this ajax request
+                 * (by returning a value), and use the cache key to retrieve the value from the IndexedDB. Then,
+                 * call the completeCallback with the fetched value.
+                 */
                 return {
                     send:function(headers, completeCallback) {
                         $.jidb.getItem(cacheKey).done(function(result){
